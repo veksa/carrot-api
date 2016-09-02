@@ -1041,8 +1041,12 @@ class Api
             'params' => $params,
             'by_user_id' => 'true'
         ], 'post');
-        
-        return $res;
+
+        if ($res && isset($res['id'])) {
+            return true;
+        }
+
+        return false;
     }
     
     
