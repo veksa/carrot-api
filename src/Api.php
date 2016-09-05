@@ -1017,7 +1017,7 @@ class Api
             'body' => $message
         ];
 
-        $res = $this->call('users/' . $id . '/startconversation', $params, 'get');
+        $res = $this->call('users/' . $id . '/startconversation', $params, 'post');
 
         if ($res && isset($res['id'])) {
             return true;
