@@ -6,6 +6,7 @@ use Veksa\Carrot\Exceptions\HttpException;
 use Veksa\Carrot\Exceptions\InvalidJsonException;
 use Veksa\Carrot\Exceptions\InvalidArgumentException;
 use Veksa\Carrot\Types\Conversation;
+use Veksa\Carrot\Types\Event;
 use Veksa\Carrot\Types\Message;
 use Veksa\Carrot\Types\User;
 
@@ -1062,6 +1063,43 @@ class Api
         }
 
         return false;
+    }
+
+    /**
+     * Receive events that the user makes a chronologically.
+     *
+     * @param int $id - user ID
+     * @param array $eventName - If you specify here the name of the event will be refunded only event of this type.
+     * @param int $limit - max of events then returned
+     * @param int $offset - offset of beginning
+     *
+     * @return array
+     *
+     * @throws InvalidArgumentException
+     * @throws Exception
+     */
+
+    public function getEvents($id, $eventName = null, $limit = 20, $offset = 0)
+    {
+        $params = [
+            'count' => $limit,
+            'after' => $offset
+        ];
+
+        if ($eventName) {
+            $params['filter_name'] = $eventName;
+        }
+
+        $data = $this->call('users/' . $id . '/events', $params, 'get');
+
+        $array = [];
+        if ($data) {
+            foreach ($data as $msg) {
+                $array[] = Event::fromResponse($msg);
+            }
+        }
+
+        return $array;
     }
 
     /**

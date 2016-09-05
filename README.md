@@ -271,6 +271,19 @@ Tracking events, which is performed by the user.
 
 ----------
 
+#### getEvents
+Receive events that the user makes a chronologically.
+
+**id** *int*: user ID. *Required options*
+
+**eventName** *string*: name of event to filter.
+
+**limit** *int*: limit show users. Default: 20
+
+**offset** *int*: start from. Default: 0
+
+----------
+
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
