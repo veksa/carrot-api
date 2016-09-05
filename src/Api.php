@@ -371,7 +371,8 @@ class Api
         $closed = null,
         $assigned = null,
         $tags = []
-    ) {
+    )
+    {
         $params = [
             'count' => $limit,
             'after' => $offset
@@ -487,7 +488,8 @@ class Api
         $randomId = 0,
         $autoAssign = 0,
         $autoAssignRandomId = 0
-    ) {
+    )
+    {
         if ($this->isEmptyId($id)) {
             throw new InvalidArgumentException;
         }
@@ -991,9 +993,9 @@ class Api
     }
 
     /**
-     * Start conversation by the user.
+     * Start conversation with user.
      *
-     * @param int $id - conversation ID
+     * @param int $id - user ID
      * @param string $message
      *
      * @return bool
@@ -1024,7 +1026,18 @@ class Api
         return false;
     }
 
-    public function trackEvent($id, $eventName, $params = [])
+    /**
+     * Tracking events, which is performed by the user.
+     *
+     * @param $id - user ID
+     * @param $eventName
+     * @param array $additionalParams
+     *
+     * @return bool
+     *
+     * @throws InvalidArgumentException
+     */
+    public function trackEvent($id, $eventName, $additionalParams = [], $isSystem = true)
     {
         if ($this->isEmptyId($id)) {
             throw new InvalidArgumentException;
@@ -1034,13 +1047,15 @@ class Api
             throw new InvalidArgumentException;
         }
 
-        $params = json_encode($params);
-
-        $res = $this->call('users/' . $id . '/events', [
+        $params = [
             'event' => $eventName,
-            'params' => $params,
-            'by_user_id' => 'true'
-        ], 'post');
+            'params' => json_encode($additionalParams)
+        ];
+        if (!$isSystem) {
+            $params['by_user_id'] = 'true';
+        }
+
+        $res = $this->call('users/' . $id . '/events', $params, 'post');
 
         if ($res && isset($res['id'])) {
             return true;
@@ -1048,8 +1063,6 @@ class Api
 
         return false;
     }
-    
-    
 
     /**
      * Close curl

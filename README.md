@@ -251,6 +251,26 @@ Send messages to a specific user.
 
 ----------
 
+#### startConversation
+Start conversation with user.
+
+**id** *int*: user ID. *Required options*
+
+**message** *string*: text of message. *Required options*
+
+----------
+
+#### trackEvent
+Tracking events, which is performed by the user.
+
+**id** *int*: user ID. *Required options*
+
+**eventName** *string*: name of event. *Required options*
+
+**additionalParams** *array*: additional params
+
+----------
+
 ## Change log
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
