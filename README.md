@@ -31,7 +31,7 @@ to the require section of your `composer.json` file.
 
 ### API Wrapper
 ``` php
-$carrot = new \Veksa\Carrot\Api('YOUR_APP_ID', 'YOUR_CARROT_API_KEY', 'YOUR_CARROT_API_SECRET_KEY');
+$carrot = new \Veksa\Carrot\Api('YOUR_APP_ID', 'YOUR_CARROT_API_TOKEN');
 ```
 ### Methods
 
