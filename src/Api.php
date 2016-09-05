@@ -371,8 +371,7 @@ class Api
         $closed = null,
         $assigned = null,
         $tags = []
-    )
-    {
+    ) {
         $params = [
             'count' => $limit,
             'after' => $offset
@@ -488,8 +487,7 @@ class Api
         $randomId = 0,
         $autoAssign = 0,
         $autoAssignRandomId = 0
-    )
-    {
+    ) {
         if ($this->isEmptyId($id)) {
             throw new InvalidArgumentException;
         }
