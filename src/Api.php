@@ -134,14 +134,13 @@ class Api
      * Constructor
      *
      * @param string $appId Carrot Quest app ID
-     * @param string $key Carrot Quest API key
-     * @param string $secret Carrot Quest API secret key
+     * @param string $token Carrot Quest Auth token
      */
-    public function __construct($appId, $key, $secret)
+    public function __construct($appId, $token)
     {
         $this->curl = curl_init();
         $this->appId = $appId;
-        $this->token = 'app.' . $key . '.' . $secret;
+        $this->token = $token;
     }
 
     /**
