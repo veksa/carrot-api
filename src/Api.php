@@ -1024,6 +1024,33 @@ class Api
         return false;
     }
 
+    public function trackEvent($id, $eventName, $params = [])
+    {
+        if ($this->isEmptyId($id)) {
+            throw new InvalidArgumentException;
+        }
+
+        if (!$eventName) {
+            throw new InvalidArgumentException;
+        }
+
+        $params = json_encode($params);
+
+        $res = $this->call('users/' . $id . '/events', [
+            'event' => $eventName,
+            'params' => $params,
+            'by_user_id' => 'true'
+        ], 'post');
+
+        if ($res && isset($res['id'])) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    
+
     /**
      * Close curl
      */
