@@ -1044,9 +1044,13 @@ class Api
      * @param $eventName
      * @param array $additionalParams
      *
+     * @param bool $isSystem
      * @return bool
      *
+     * @throws Exception
+     * @throws HttpException
      * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
     public function trackEvent($id, $eventName, $additionalParams = [], $isSystem = true)
     {
