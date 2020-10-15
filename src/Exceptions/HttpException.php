@@ -19,4 +19,9 @@ class HttpException extends Exception
         $this->response = $response;
         return $this;
     }
+
+    public function getResponse()
+    {
+        return $this->response;
+    }
 }
