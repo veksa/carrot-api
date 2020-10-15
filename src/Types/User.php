@@ -36,12 +36,12 @@ class User extends BaseType implements TypeInterface
      *
      * @var int
      */
-    protected $appId;
+    protected $app;
 
     /**
      * Unique local user identifier
      *
-     * @var int
+     * @var string
      */
     protected $userId;
 
@@ -80,20 +80,20 @@ class User extends BaseType implements TypeInterface
     /**
      * @return int
      */
-    public function getAppId()
+    public function getApp()
     {
-        return $this->appId;
+        return $this->app;
     }
 
     /**
-     * @param int $appId
+     * @param int $app
      *
      * @throws InvalidArgumentException
      */
-    public function setAppId($appId)
+    public function setApp($app)
     {
-        if (is_integer($appId)) {
-            $this->appId = $appId;
+        if (is_integer($app)) {
+            $this->app = $app;
         } else {
             throw new InvalidArgumentException;
         }
@@ -122,7 +122,7 @@ class User extends BaseType implements TypeInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getUserId()
     {
@@ -130,17 +130,13 @@ class User extends BaseType implements TypeInterface
     }
 
     /**
-     * @param int $userId
+     * @param string $userId
      *
      * @throws InvalidArgumentException
      */
     public function setUserId($userId)
     {
-        if (is_integer($userId)) {
-            $this->userId = $userId;
-        } else {
-            throw new InvalidArgumentException;
-        }
+        $this->userId = $userId;
     }
 
     /**

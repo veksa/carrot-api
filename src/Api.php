@@ -244,6 +244,18 @@ class Api
     }
 
     /**
+     * Check correct string
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
+    private function isEmptyString($string)
+    {
+        return empty($string);
+    }
+
+    /**
      * Check correct userId
      *
      * @param int $userId
@@ -360,12 +372,11 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
      * @throws Exception
      */
 
     public function getConversations(
-        $userId = false,
+        $userId = null,
         $limit = 20,
         $offset = 0,
         $closed = null,
@@ -378,7 +389,7 @@ class Api
         ];
 
         if ($userId) {
-            $data = $this->call('users/' . $this->appId . '/conversations', $params, 'get');
+            $data = $this->call('users/' . $userId . '/conversations', $params, 'get');
         } else {
             if ($closed !== null) {
                 $params['closed'] = (bool)$closed;
@@ -815,7 +826,7 @@ class Api
     /**
      * Get user by ID.
      *
-     * @param int $id
+     * @param string $id - user ID
      * @param bool $isSystem
      *
      * @return User
@@ -825,7 +836,7 @@ class Api
      */
     public function getUser($id, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -846,7 +857,7 @@ class Api
     /**
      * Insert/Update user props.
      *
-     * @param int $id - user ID
+     * @param string $id - user ID
      * @param array $props
      * @param bool $isSystem - is system user
      *
@@ -855,7 +866,7 @@ class Api
      */
     public function setProps($id, $props, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -893,7 +904,7 @@ class Api
      */
     public function deleteProps($id, $props, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -931,7 +942,7 @@ class Api
      */
     public function setPresence($id, $presence, $sessionId)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -1003,7 +1014,7 @@ class Api
      */
     public function startConversation($id, $message)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -1037,7 +1048,7 @@ class Api
      */
     public function trackEvent($id, $eventName, $additionalParams = [], $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -1078,6 +1089,10 @@ class Api
 
     public function getEvents($id, $eventName = null, $limit = 20, $offset = 0)
     {
+        if ($this->isEmptyString($id)) {
+            throw new InvalidArgumentException;
+        }
+
         $params = [
             'count' => $limit,
             'after' => $offset
