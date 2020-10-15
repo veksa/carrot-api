@@ -14,7 +14,7 @@ class HttpException extends Exception
      */
     public $response;
 
-    public function setResponse($response): HttpException
+    public function setResponse($response)
     {
         $this->response = $response;
         return $this;
