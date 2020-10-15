@@ -174,7 +174,7 @@ class Api
     {
         $url = self::URL_PREFIX . '/' . $method . '?auth_token=' . $this->token;
         if ($data && $type == 'get') {
-            $url .= '&' . implode('&', $data);
+            $url .= '&' . http_build_query($data);
         }
 
         $options = [
