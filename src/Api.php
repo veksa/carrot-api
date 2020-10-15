@@ -287,8 +287,8 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function getActiveUsers()
     {
@@ -308,7 +308,7 @@ class Api
      *
      * @return int
      *
-     * @throws InvalidArgumentException
+     * @throws HttpException
      * @throws Exception
      */
     public function getCountLeads()
@@ -334,7 +334,7 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
+     * @throws HttpException
      * @throws Exception
      */
 
@@ -374,9 +374,9 @@ class Api
      *
      * @return array
      *
+     * @throws HttpException
      * @throws Exception
      */
-
     public function getConversations(
         $userId = null,
         $limit = 20,
@@ -423,6 +423,7 @@ class Api
      *
      * @return Conversation
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -439,13 +440,15 @@ class Api
      * Get messages from conversation.
      *
      * @param int $id conversation id
-     * @param int $count
+     * @param int $limit
      * @param int $offset
      *
-     * @return Message
+     * @return array
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
 
     public function getMessages($id, $limit = 20, $offset = 0)
@@ -476,7 +479,7 @@ class Api
      *
      * @param int $id
      * @param string $message
-     * @param bool $type
+     * @param string $type
      * @param string $botName
      * @param bool $fromUser - send message from user
      * @param int $fromAdmin - Id of Admin or default_admin, send message from admin
@@ -486,8 +489,10 @@ class Api
      *
      * @return bool
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
 
     public function sendConversationMessage(
@@ -589,6 +594,7 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -637,6 +643,7 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -687,10 +694,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function addTag($id, $tag, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -740,10 +747,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function deleteTag($id, $tag, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -792,10 +799,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function closeConversation($id, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -833,6 +840,7 @@ class Api
      *
      * @return User
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -865,6 +873,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function setProps($id, $props, $isSystem = true)
     {
@@ -901,6 +910,7 @@ class Api
      * @param array $props
      * @param bool $isSystem - is system user
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -941,6 +951,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function setPresence($id, $presence, $sessionId)
     {
@@ -975,6 +986,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function sendUserMessage($id, $message, $type = 'popup_chat')
     {
@@ -1013,6 +1025,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function startConversation($id, $message)
     {
@@ -1091,6 +1104,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
 
     public function getEvents($id, $eventName = null, $limit = 20, $offset = 0)
