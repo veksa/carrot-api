@@ -203,7 +203,7 @@ class Api
     {
         curl_setopt_array($this->curl, $options);
         $result = curl_exec($this->curl);
-        self::curlValidate($this->curl);
+        self::curlValidate($this->curl, $result);
 
         return $result;
     }
@@ -215,12 +215,14 @@ class Api
      *
      * @throws HttpException
      */
-    public static function curlValidate($curl)
+    public static function curlValidate($curl, $result)
     {
         if (($httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE)) &&
             !in_array($httpCode, [self::DEFAULT_STATUS_CODE, self::NOT_MODIFIED_STATUS_CODE])
         ) {
-            throw new HttpException(self::$codes[$httpCode], $httpCode);
+            $exception = (new HttpException(self::$codes[$httpCode], $httpCode))
+                ->setResponse($result);
+            throw $exception;
         }
     }
 

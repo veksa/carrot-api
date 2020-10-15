@@ -9,4 +9,14 @@ namespace Veksa\Carrot\Exceptions;
  */
 class HttpException extends Exception
 {
+    /**
+     * @var string
+     */
+    public $response;
+
+    public function setResponse($response): HttpException
+    {
+        $this->response = $response;
+        return $this;
+    }
 }
