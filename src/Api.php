@@ -203,7 +203,7 @@ class Api
     {
         curl_setopt_array($this->curl, $options);
         $result = curl_exec($this->curl);
-        self::curlValidate($this->curl);
+        self::curlValidate($this->curl, $result);
 
         return $result;
     }
@@ -215,12 +215,14 @@ class Api
      *
      * @throws HttpException
      */
-    public static function curlValidate($curl)
+    public static function curlValidate($curl, $result)
     {
         if (($httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE)) &&
             !in_array($httpCode, [self::DEFAULT_STATUS_CODE, self::NOT_MODIFIED_STATUS_CODE])
         ) {
-            throw new HttpException(self::$codes[$httpCode], $httpCode);
+            $exception = (new HttpException(self::$codes[$httpCode], $httpCode))
+                ->setResponse($result);
+            throw $exception;
         }
     }
 
@@ -241,6 +243,18 @@ class Api
             throw new InvalidJsonException(json_last_error_msg(), json_last_error());
         }
         return $json;
+    }
+
+    /**
+     * Check correct string
+     *
+     * @param string $string
+     *
+     * @return bool
+     */
+    private function isEmptyString($string)
+    {
+        return empty($string);
     }
 
     /**
@@ -273,8 +287,8 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function getActiveUsers()
     {
@@ -294,7 +308,7 @@ class Api
      *
      * @return int
      *
-     * @throws InvalidArgumentException
+     * @throws HttpException
      * @throws Exception
      */
     public function getCountLeads()
@@ -320,7 +334,7 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
+     * @throws HttpException
      * @throws Exception
      */
 
@@ -360,12 +374,11 @@ class Api
      *
      * @return array
      *
-     * @throws InvalidArgumentException
+     * @throws HttpException
      * @throws Exception
      */
-
     public function getConversations(
-        $userId = false,
+        $userId = null,
         $limit = 20,
         $offset = 0,
         $closed = null,
@@ -378,7 +391,7 @@ class Api
         ];
 
         if ($userId) {
-            $data = $this->call('users/' . $this->appId . '/conversations', $params, 'get');
+            $data = $this->call('users/' . $userId . '/conversations', $params, 'get');
         } else {
             if ($closed !== null) {
                 $params['closed'] = (bool)$closed;
@@ -410,6 +423,7 @@ class Api
      *
      * @return Conversation
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -426,13 +440,15 @@ class Api
      * Get messages from conversation.
      *
      * @param int $id conversation id
-     * @param int $count
+     * @param int $limit
      * @param int $offset
      *
-     * @return Message
+     * @return array
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
 
     public function getMessages($id, $limit = 20, $offset = 0)
@@ -463,7 +479,7 @@ class Api
      *
      * @param int $id
      * @param string $message
-     * @param bool $type
+     * @param string $type
      * @param string $botName
      * @param bool $fromUser - send message from user
      * @param int $fromAdmin - Id of Admin or default_admin, send message from admin
@@ -473,8 +489,10 @@ class Api
      *
      * @return bool
      *
-     * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
+     * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
 
     public function sendConversationMessage(
@@ -576,6 +594,7 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -624,6 +643,7 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
@@ -674,10 +694,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function addTag($id, $tag, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -727,10 +747,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function deleteTag($id, $tag, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -779,10 +799,10 @@ class Api
      *
      * @return bool
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
-
     public function closeConversation($id, $fromAdminId = null, $botName = 'Bot', $randomId = 0)
     {
         if ($this->isEmptyId($id)) {
@@ -815,17 +835,18 @@ class Api
     /**
      * Get user by ID.
      *
-     * @param int $id
+     * @param string $id - user ID
      * @param bool $isSystem
      *
      * @return User
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
     public function getUser($id, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -846,16 +867,17 @@ class Api
     /**
      * Insert/Update user props.
      *
-     * @param int $id - user ID
+     * @param string $id - user ID
      * @param array $props
      * @param bool $isSystem - is system user
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function setProps($id, $props, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -888,12 +910,13 @@ class Api
      * @param array $props
      * @param bool $isSystem - is system user
      *
+     * @throws HttpException
      * @throws InvalidArgumentException
      * @throws Exception
      */
     public function deleteProps($id, $props, $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -928,10 +951,11 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function setPresence($id, $presence, $sessionId)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -962,6 +986,7 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function sendUserMessage($id, $message, $type = 'popup_chat')
     {
@@ -1000,10 +1025,11 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
     public function startConversation($id, $message)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -1031,13 +1057,17 @@ class Api
      * @param $eventName
      * @param array $additionalParams
      *
+     * @param bool $isSystem
      * @return bool
      *
+     * @throws Exception
+     * @throws HttpException
      * @throws InvalidArgumentException
+     * @throws InvalidJsonException
      */
     public function trackEvent($id, $eventName, $additionalParams = [], $isSystem = true)
     {
-        if ($this->isEmptyId($id)) {
+        if ($this->isEmptyString($id)) {
             throw new InvalidArgumentException;
         }
 
@@ -1074,10 +1104,15 @@ class Api
      *
      * @throws InvalidArgumentException
      * @throws Exception
+     * @throws HttpException
      */
 
     public function getEvents($id, $eventName = null, $limit = 20, $offset = 0)
     {
+        if ($this->isEmptyString($id)) {
+            throw new InvalidArgumentException;
+        }
+
         $params = [
             'count' => $limit,
             'after' => $offset
